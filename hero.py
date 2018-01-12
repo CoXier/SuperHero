@@ -21,7 +21,7 @@ img_size = im.size
 w = im.size[0]
 h = im.size[1]
 
-region = im.crop((130, 360, w, 730))
+region = im.crop((130, 360, w, 560))
 clip_image = os.path.join(screenshot_dir, 'clip.png')
 region.save(clip_image)
 
