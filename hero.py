@@ -51,5 +51,5 @@ command = "open -a Google\ Chrome https://m.baidu.com/s\?word\=" + urllib.quote_
 print(command)
 os.system(command)
 end = time.time()
-print('Time:{}s'.format(str((end - start) / 1000)))
+print('Time:{}s'.format(str((end - start))))
 
