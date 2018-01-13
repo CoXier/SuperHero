@@ -47,9 +47,9 @@ for words_dict in response['words_result']:
     question_text += words
 question_text = str(question_text.encode('utf-8')).strip()
 print(question_text)
-command = "open -a Google\ Chrome http://www.baidu.com/s\?wd\=" + urllib.quote_plus(question_text)
+command = "open -a Google\ Chrome https://m.baidu.com/s\?word\=" + urllib.quote_plus(question_text)
 print(command)
 os.system(command)
 end = time.time()
-print('Time:{}s'.format(str((end - start) / 1000)))
+print('Time:{}s'.format(str((end - start))))
 
