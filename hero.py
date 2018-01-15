@@ -5,7 +5,9 @@ import os
 import time
 import urllib
 from PIL import Image
+import sys
 
+mode = int(sys.argv[1])
 start = time.time()
 current_dir = os.path.dirname(__file__)
 screenshot_dir = os.path.join(current_dir, "screenshot")
@@ -21,7 +23,13 @@ img_size = im.size
 w = im.size[0]
 h = im.size[1]
 
-region = im.crop((160, 340, w, 650))
+if mode == 0:
+    region = im.crop((160, 340, w, 650))
+elif mode == 1:
+    region = im.crop((160, 670, w, 1270))
+else:
+    region = im.crop((160, 340, w, 1270))
+
 clip_image = os.path.join(screenshot_dir, 'clip.png')
 region.save(clip_image)
 
