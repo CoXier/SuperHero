@@ -23,11 +23,14 @@ img_size = im.size
 w = im.size[0]
 h = im.size[1]
 
-if mode == 0:
+if mode == 1:
+    # 问题区域
     region = im.crop((160, 340, w, 650))
-elif mode == 1:
+elif mode == 2:
+    # 答案区域
     region = im.crop((160, 670, w, 1270))
 else:
+    # 问题+答案区域
     region = im.crop((160, 340, w, 1270))
 
 clip_image = os.path.join(screenshot_dir, 'clip.png')
