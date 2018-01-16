@@ -8,7 +8,10 @@ from PIL import Image
 import sys
 
 start = time.time()
-mode = int(sys.argv[1])
+if len(sys.argv) == 1:
+    mode = 1
+else:
+    mode = int(sys.argv[1])
 current_dir = os.path.dirname(__file__)
 screenshot_dir = os.path.join(current_dir, "screenshot")
 if not os.path.exists(screenshot_dir):
@@ -23,10 +26,8 @@ img_size = im.size
 w = im.size[0]
 h = im.size[1]
 
-if mode == 0:
+if mode == 1:
     region = im.crop((160, 360, w, 560))
-elif mode == 1:
-    region = im.crop((60, 570, w, 1140))
 else:
     region = im.crop((60, 360, w, 1140))
 
