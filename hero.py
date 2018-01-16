@@ -6,9 +6,13 @@ import time
 import urllib
 from PIL import Image
 import sys
+import webbrowser
 
-mode = int(sys.argv[1])
 start = time.time()
+if len(sys.argv) == 1:
+    mode = 1
+else:
+    mode = int(sys.argv[1])
 current_dir = os.path.dirname(__file__)
 screenshot_dir = os.path.join(current_dir, "screenshot")
 if not os.path.exists(screenshot_dir):
@@ -26,9 +30,6 @@ h = im.size[1]
 if mode == 1:
     # 问题区域
     region = im.crop((160, 340, w, 650))
-elif mode == 2:
-    # 答案区域
-    region = im.crop((160, 670, w, 1270))
 else:
     # 问题+答案区域
     region = im.crop((160, 340, w, 1270))
@@ -43,7 +44,7 @@ s = bytes.decode(ls_f)
 
 post_body = {
     "image": s,
-    "language_type":'CHN_ENG',
+    "language_type": 'CHN_ENG',
 }
 headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -58,9 +59,6 @@ for words_dict in response['words_result']:
     question_text += words
 question_text = str(question_text.encode('utf-8')).strip()
 print(question_text)
-command = "open -a Google\ Chrome https://m.baidu.com/s\?word\=" + urllib.quote_plus(question_text)
-print(command)
-os.system(command)
+webbrowser.open('https://m.baidu.com/s?word=' + urllib.quote_plus(question_text))
 end = time.time()
 print('Time:{}s'.format(str((end - start))))
-
