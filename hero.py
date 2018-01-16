@@ -29,7 +29,7 @@ h = im.size[1]
 if mode == 1:
     region = im.crop((160, 360, w, 560))
 else:
-    region = im.crop((60, 360, w, 1140))
+    region = im.crop((60, 360, w, 1300))
 
 clip_image = os.path.join(screenshot_dir, 'clip.png')
 region.save(clip_image)
