@@ -1,64 +1,35 @@
 # coding: utf-8
-import requests
 import base64
-import os
 import time
-import urllib
 from PIL import Image
-import sys
-import webbrowser
+import io
 
-start = time.time()
-if len(sys.argv) == 1:
-    mode = 1
-else:
-    mode = int(sys.argv[1])
-current_dir = os.path.dirname(__file__)
-screenshot_dir = os.path.join(current_dir, "screenshot")
-if not os.path.exists(screenshot_dir):
-    os.makedirs(screenshot_dir)
-screenshot = os.path.join(screenshot_dir, 'screen.png')
-os.system('adb exec-out screencap -p > {}'.format(str(screenshot)))
-url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic'
+from common import mobile
+from core import image_parser
+from core import baidu_search
 
-im = Image.open(screenshot)
 
-img_size = im.size
-w = im.size[0]
-h = im.size[1]
+def _start():
+    start = time.time()
+    screenshot = mobile.screen_shot()
+    im = Image.open(screenshot)
+    region = im.crop((160, 340, 1024, 650))
+    with io.BytesIO() as tmp_file:
+        region.save(tmp_file, format="PNG")
+        ls_f = base64.b64encode(tmp_file.getvalue())
+        s = bytes.decode(ls_f)
 
-if mode == 1:
-    # 问题区域
-    region = im.crop((160, 340, w, 650))
-else:
-    # 问题+答案区域
-    region = im.crop((160, 340, w, 1270))
+    # 调用百度文字识别
+    question_text = image_parser.parse(s)
+    question_text = str(question_text.encode('utf-8')).strip()
+    print(question_text)
 
-clip_image = os.path.join(screenshot_dir, 'clip.png')
-region.save(clip_image)
+    # 打开浏览器搜索
+    baidu_search.open(question_text)
 
-f = open(clip_image, 'rb')
-ls_f = base64.b64encode(f.read())
-f.close()
-s = bytes.decode(ls_f)
+    end = time.time()
+    print('Time:{}s'.format(str((end - start))))
 
-post_body = {
-    "image": s,
-    "language_type": 'CHN_ENG',
-}
-headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-}
-params = {
-    'access_token': '24.3943efe74848f2cacab6342a9649f0de.2592000.1521121428.282335-10682596'
-}
-response = requests.post(url, data=post_body, headers=headers, params=params).json()
-question_text = u' '
-for words_dict in response['words_result']:
-    words = words_dict.get('words')
-    question_text += words
-question_text = str(question_text.encode('utf-8')).strip()
-print(question_text)
-webbrowser.open('https://m.baidu.com/s?word=' + urllib.quote_plus(question_text))
-end = time.time()
-print('Time:{}s'.format(str((end - start))))
+
+if __name__ == '__main__':
+    _start()
