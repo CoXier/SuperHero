@@ -1,24 +1,18 @@
 # coding: utf-8
-import base64
 import time
-from PIL import Image
-import io
 
-from common import mobile
+from common import argparser
 from core import image_parser
 from core import baidu_search
 
+from common.mobile import Mobile
+
+mobile = None
+
 
 def _start():
-    start = time.time()
-    screenshot = mobile.screen_shot()
-    im = Image.open(screenshot)
-    region = im.crop((160, 340, 1024, 650))
-    with io.BytesIO() as tmp_file:
-        region.save(tmp_file, format="PNG")
-        ls_f = base64.b64encode(tmp_file.getvalue())
-        s = bytes.decode(ls_f)
-
+    start_time = time.time()
+    s = mobile.screen_shot()
     # 调用百度文字识别
     question_text = image_parser.parse(s)
     question_text = str(question_text.encode('utf-8')).strip()
@@ -27,9 +21,11 @@ def _start():
     # 打开浏览器搜索
     baidu_search.open(question_text)
 
-    end = time.time()
-    print('Time:{}s'.format(str((end - start))))
+    end_time = time.time()
+    print('Time:{}s'.format(str((end_time - start_time))))
 
 
 if __name__ == '__main__':
+    app_name = argparser.parse_args()
+    mobile = Mobile(app_name)
     _start()
